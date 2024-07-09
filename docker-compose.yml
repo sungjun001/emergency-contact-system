@@ -1,0 +1,40 @@
+services:
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_USER=emer_sys
+      - POSTGRES_PASSWORD=xptmxm$123  # Change this to a more secure password
+      - POSTGRES_DB=emergency_system
+      - DATABASE_URL=postgres://emer_sys:xptmxm$123@db:5432/emergency_system
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: emer_sys
+      POSTGRES_PASSWORD: xptmxm$123
+      POSTGRES_DB: emergency_system
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
